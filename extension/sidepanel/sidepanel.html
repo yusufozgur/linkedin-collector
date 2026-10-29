@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Feed Collector</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <header>
+    <h1>Feed Collector</h1>
+    <span id="status" class="pill">…</span>
+  </header>
+
+  <section class="controls">
+    <button id="start" class="primary">Start</button>
+    <button id="stop">Stop</button>
+  </section>
+  <p id="reason" class="muted"></p>
+
+  <section class="counters">
+    <div><b id="c-saved">0</b><span>saved</span></div>
+    <div><b id="c-updated">0</b><span>already had</span></div>
+    <div><b id="c-skipped">0</b><span>ads skipped</span></div>
+    <div><b id="c-errors">0</b><span>errors</span></div>
+  </section>
+
+  <details>
+    <summary>Settings</summary>
+    <form id="settings">
+      <label>Pause per post (s) <span><input name="minDelaySec" type="number" min="1" step="0.5"> – <input name="maxDelaySec" type="number" min="1" step="0.5"></span></label>
+      <label>Break every (posts) <span><input name="breakEveryMin" type="number" min="1"> – <input name="breakEveryMax" type="number" min="1"></span></label>
+      <label>Break length (s) <span><input name="breakMinSec" type="number" min="1"> – <input name="breakMaxSec" type="number" min="1"></span></label>
+      <label>Max posts per run <input name="maxPosts" type="number" min="1"></label>
+      <label class="check"><input name="skipAds" type="checkbox"> Skip promoted posts</label>
+    </form>
+  </details>
+
+  <section>
+    <h2>Database</h2>
+    <p id="db-stats" class="muted">…</p>
+    <div class="db-actions">
+      <button id="export">Export .sqlite3</button>
+      <button id="clear" class="danger">Clear all data</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Recently saved</h2>
+    <ol id="recent"></ol>
+  </section>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
