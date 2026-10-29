@@ -223,3 +223,7 @@ Bump `version` in `extension/manifest.json` first, then attach the zip to a GitH
 - [SQLite](https://sqlite.org) is in the public domain.
 - [`@sqlite.org/sqlite-wasm`](https://github.com/sqlite/sqlite-wasm) is distributed under the
   Apache License 2.0, included as `extension/vendor/sqlite/LICENSE.md`.
+
+## License
+
+MIT, see [LICENSE](LICENSE). The vendored SQLite files keep their own terms, listed above.
