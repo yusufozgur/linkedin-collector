@@ -1,0 +1,73 @@
+# Publishes a GitHub release for each extension version.
+#
+# On every push to main, and when run by hand from the Actions tab, it reads `version` from
+# extension/manifest.json. If no release v<version> exists yet, it builds the zip with
+# package.sh and creates the release with that zip attached. Pushes that don't change the
+# version do nothing. Running it by hand with "replace" set rebuilds the zip of an existing
+# release instead.
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      replace:
+        description: Rebuild the zip of an existing release for the current version
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the extension
+        run: |
+          jq empty extension/manifest.json
+          for f in $(git ls-files 'extension/*.js' ':!extension/vendor'); do node --check "$f"; done
+
+      - name: Read version
+        id: version
+        run: |
+          version=$(jq -r .version extension/manifest.json)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if gh release view "v$version" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Skip (release already exists)
+        if: steps.version.outputs.exists == 'true' && inputs.replace != true
+        run: echo "Release v${{ steps.version.outputs.version }} already exists; bump the version in extension/manifest.json to publish a new one."
+
+      - name: Build zip
+        if: steps.version.outputs.exists == 'false' || inputs.replace == true
+        run: ./package.sh
+
+      - name: Create release
+        if: steps.version.outputs.exists == 'false'
+        run: |
+          gh release create "v$VERSION" dist/linkedin-feed-collector-"$VERSION".zip \
+            --target "$GITHUB_SHA" --title "v$VERSION" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Replace zip of existing release
+        if: steps.version.outputs.exists == 'true' && inputs.replace == true
+        run: gh release upload "v$VERSION" dist/linkedin-feed-collector-"$VERSION".zip --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}

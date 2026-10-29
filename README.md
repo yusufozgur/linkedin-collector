@@ -212,11 +212,20 @@ node tools/export.mjs [file]    # save the database to a file (default: data/lin
 
 ### Making a release
 
+Releases are published by the `Release` workflow (`.github/workflows/release.yml`). To make one,
+bump `version` in `extension/manifest.json` and push to `main`. The workflow checks the extension,
+builds `linkedin-feed-collector-<version>.zip` with `package.sh`, and creates the release
+`v<version>` with the zip attached and notes generated from the commits since the last release.
+Pushes that don't change the version are skipped.
+
+The workflow can also be run by hand from the Actions tab. With **replace** checked it rebuilds
+the zip of the existing release for the current version.
+
+To build the zip locally:
+
 ```bash
 ./package.sh   # writes dist/linkedin-feed-collector-<version>.zip
 ```
-
-Bump `version` in `extension/manifest.json` first, then attach the zip to a GitHub release.
 
 ## Third-party code
 
