@@ -6,3 +6,7 @@ data/
 ext/
 # Release zips built by package.sh.
 dist/
+# For api keys for the analysis module
+.env
+__marimo__/
+.venv

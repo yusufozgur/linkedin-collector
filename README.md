@@ -168,6 +168,30 @@ sqlite3 linkedin-feed.sqlite3 \
    JOIN images i ON i.sha256 = pi.sha256"
 ```
 
+## Analysis notebook
+
+`analysis/SystemOneClassification.py` is a [marimo](https://marimo.io) notebook that sorts an
+exported database into categories with a System One decision model, so the relevant posts can
+be pulled out of the rest of the feed.
+
+1. Pick an exported `.sqlite3` file in the file browser.
+2. Enter an [OpenRouter](https://openrouter.ai) API key. Each post (with the original post, for
+   reposts) is classified as "PHD opening (computational biology or machine learning or AI)",
+   "PHD opening (other fields)", "Job opening" or "other", via
+   [`typesafe-sdk`](https://pypi.org/project/typesafe-sdk/).
+3. Choose a category. Posts with a probability above 0.7 for it are kept, sorted by
+   probability, and can be browsed one at a time with the slider, together with their images.
+
+![The analysis notebook showing PhD openings found in the feed](docs/analysis-notebook.png)
+
+The categories are defined in the notebook; edit `CATEGORIES` to look for something else.
+To run it you need [uv](https://docs.astral.sh/uv/):
+
+```bash
+cd analysis
+uv run marimo edit SystemOneClassification.py
+```
+
 ## How it works
 
 | File | Role |
