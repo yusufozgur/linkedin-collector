@@ -1,0 +1,8 @@
+# Exported databases hold collected posts; keep them out of the repository.
+data/
+*.sqlite3
+*.log
+# Early side-panel experiment, not part of the extension.
+ext/
+# Release zips built by package.sh.
+dist/
